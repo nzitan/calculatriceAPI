@@ -10,7 +10,7 @@ use App\Model\ResponseModel;
 use App\Service\Calculator;
 //Le routing est en place et ne prends en compte que les appel en méthode POST et vérifie la présence de chaque paramètres
 final class CalculatorController extends AbstractController{
-    #[Route('/calculator', name: 'app_calculator', methods : ['POST'])]
+    #[Route('/calculator', name: 'app_calculator', methods : ['POST', "OPTIONS"])]
     public function calculator( Request $request ): JsonResponse
     {
         $num1 = (int) $request->getPayload()->get('nombre1');
@@ -31,9 +31,9 @@ final class CalculatorController extends AbstractController{
             $response = new ResponseModel(1, "le paramètre nombre2 n'est pas un integer");
             return $this->json($response);
         }
-        $operation = $request->getPayload()->get('operation');
+        $operation = $request->getPayload()->get('operator');
         if(is_null($operation)){
-            $response = new ResponseModel(1, "le paramètre operation est manquant.");
+            $response = new ResponseModel(1, "le paramètre operator est manquant.");
             return $this->json($response);
         }
         if($operation === "+" || $operation === "-" ||$operation === "*" ||$operation === "/"){
@@ -41,7 +41,7 @@ final class CalculatorController extends AbstractController{
             $response = new ResponseModel(0, $calculator->getResult());
             return $this->json($response);
         } else {
-            $response = new ResponseModel(1, "le paramètre operation ne possède pas une des valeur possible parmis +,-,* ou /");
+            $response = new ResponseModel(1, "le paramètre operator ne possède pas une des valeur possible parmis +,-,* ou /");
             return $this->json($response);
         }
     }
